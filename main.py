@@ -30,78 +30,47 @@ def load():
         raise ValueError("未找到 OPENAI_API_KEY 环境变量，请确保已设置系统环境变量")
     return OPENAI_API_KEY
 
-def extract_md_content(file_path):
+def read_md_content(file_path):
     """
-    提取md文件中的摘要和结论
-    关键词： 摘要, 结论, Abstract, Conclusion
+    直接读取md文件全文内容
     """
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             content = file.read()
-            
-        # 定义关键词列表
-        abstract_keywords = ['摘要', 'Abstract']
-        conclusion_keywords = ['结论', 'Conclusion']
-        
-        # 提取摘要
-        abstract = None
-        for keyword in abstract_keywords:
-            if keyword in content:
-                # 查找关键词后的内容
-                start_idx = content.find(keyword) + len(keyword)
-                # 查找下一个标题（以#开头的行）
-                next_section = content.find('\n#', start_idx)
-                if next_section == -1:
-                    abstract = content[start_idx:].strip()
-                else:
-                    abstract = content[start_idx:next_section].strip()
-                break
-        
-        # 提取结论
-        conclusion = None
-        for keyword in conclusion_keywords:
-            if keyword in content:
-                start_idx = content.find(keyword) + len(keyword)
-                next_section = content.find('\n#', start_idx)
-                if next_section == -1:
-                    conclusion = content[start_idx:].strip()
-                else:
-                    conclusion = content[start_idx:next_section].strip()
-                break
-        md_content = {
-            'content': content,  # 完整内容
-            'abstract': abstract,
-            'conclusion': conclusion
-        }
-        with open("./output/abstract_conclusion.md", 'w', encoding='utf-8') as f:
-            f.write("# 摘要与结论\n\n")
-            if md_content['abstract']:
-                f.write("## Abstract\n\n")
-                f.write(f"{md_content['abstract']}\n\n")
-            if md_content['conclusion']:
-                f.write("## Conclusion\n\n")
-                f.write(f"{md_content['conclusion']}\n\n")
-        print("Abstract and conclusion saved to abstract_conclusion.md")
-        return md_content
+        return {'content': content}
     except Exception as e:
-        print(f"Error reading or processing file {file_path}: {str(e)}")
+        logger.error(f"Error reading file {file_path}: {e}")
         return None
     
-def split_into_chunks(content, chunk_size=3000):
+def split_into_chunks(content, chunk_size=10000):
     """
-    将内容分成多个块，每块不超过指定字符数
+    将内容分成多个块，每块不超过指定字符数（默认10000）
     """
     return [content[i:i+chunk_size] for i in range(0, len(content), chunk_size)]
 
 def _post_with_retries(url, headers, json_data, max_retries=4, base_delay=1):
     """
     发送 POST 请求，遇到 429/5xx 时重试（指数退避），返回 requests.Response
+    并记录每次API调用的token用量和价格（如有usage字段）
     """
+    # GPT-4 Turbo价格（2025年10月）
+    PRICE_INPUT_PER_1K = 0.01  # 美元/千tokens
+    PRICE_OUTPUT_PER_1K = 0.03
     for attempt in range(1, max_retries + 1):
         try:
             resp = requests.post(url, headers=headers, json=json_data, timeout=30)
             if resp.status_code == 200:
                 logger.debug(f"POST {url} success (200)")
+                # 记录 token 用量和价格
+                try:
+                    usage = resp.json().get('usage', {})
+                    prompt_tokens = usage.get('prompt_tokens', 0)
+                    completion_tokens = usage.get('completion_tokens', 0)
+                    total_tokens = usage.get('total_tokens', 0)
+                    cost = (prompt_tokens / 1000 * PRICE_INPUT_PER_1K) + (completion_tokens / 1000 * PRICE_OUTPUT_PER_1K)
+                    logger.info(f"API用量: prompt_tokens={prompt_tokens}, completion_tokens={completion_tokens}, total_tokens={total_tokens}, 估算价格=${cost:.4f}")
+                except Exception as e:
+                    logger.warning(f"无法解析API用量: {e}")
                 return resp
             # 对于429和常见5xx做重试
             if resp.status_code in (429, 500, 502, 503, 504):
@@ -118,7 +87,6 @@ def _post_with_retries(url, headers, json_data, max_retries=4, base_delay=1):
                 time.sleep(base_delay * (2 ** (attempt - 1)))
                 continue
             raise
-
 
 def load_existing_answers(path="./output/interpretation_results.md"):
     """
@@ -323,18 +291,20 @@ def main():
     logger.info("Starting Chatmd main process")
     OPENAI_API_KEY = load()
     md_file_path = "./mds/Relativistic electron beam propagation in the Earth's magnetosphere_MinerU__20251025025446.md"
-    md_content = extract_md_content(md_file_path)
+    md_content = read_md_content(md_file_path)
 
+    # 只提一个问题
     fixed_questions = [
-        "请总结该文档的主要内容。",
-        "该文档的关键结论是什么？",
-        "有哪些重要的数据或发现？"
+        "请总结该文档的主要内容。"#,
+        # "该文档的关键结论是什么？",
+        # "有哪些重要的数据或发现？"
     ]
     chatgpt_interpretation(md_content, fixed_questions, OPENAI_API_KEY)
-    user_questions = [
-        "该文档中提到的方法有哪些优缺点？",
-        "这些结论在实际应用中有哪些潜在影响？"]
-    answer_questions(md_content, user_questions, OPENAI_API_KEY)
+    # user_questions = [
+    #     "该文档中提到的方法有哪些优缺点？",
+    #     "这些结论在实际应用中有哪些潜在影响？"]
+    # answer_questions(md_content, user_questions, OPENAI_API_KEY)
     logger.info("Chatmd main process finished")
+
 if __name__ == "__main__":
-    main()
+    main()    
