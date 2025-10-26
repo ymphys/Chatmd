@@ -1,65 +1,56 @@
-# Chatmd — 使用与开发说明
+# Chatmd
 
-本仓库是一个脚本工具，用于从 Markdown 论文/报告中提取“摘要/结论”、按片段调用 OpenAI Chat 接口进行文档解读与问答，并把结果写回到仓库根目录的 Markdown 文件中。
+Chatmd 是一个命令行辅助脚本，用于读取指定的 Markdown 文档，把内容拆分成适合投递到 OpenAI Chat Completions API 的片段，并针对一组预设问题产出结构化解读。所有回答会被追加写入 `output/interpretation_results.md`，详细执行日志则保存在 `output/chatmd.log`。
 
-核心职责与入口
-- 入口脚本：`main.py`。主要流程：读取 `mds/` 下的 md 文件 -> `extract_md_content` 提取摘要/结论 -> `split_into_chunks` 切分 -> 对每个片段调用 OpenAI（`_post_with_retries`）-> 合并片段回答（`chatgpt_interpretation` / `answer_questions`）-> 写入 `abstract_conclusion.md` / `interpretation_results.md`。
+## 功能概览
+- 读取 `main.py` 中配置的 Markdown 源文件，并将全文载入内存。
+- 采用 `split_into_chunks`（默认 100000 字符/片）对内容分块；如果只有一块，则直接回收该块的回答。
+- 为列表中的每一个问题逐片调用 GPT-4 Turbo（`gpt-4-turbo-preview`），必要时再触发一次合并调用以整合多片段答案。
+- 通过 `load_existing_answers` 避免对已经写入过 `## 问题` 标题的条目重复提问。
+- 对每次请求记录 token 用量和费用估算，终端输出简要进度，详细信息写入 `chatmd.log`。
 
-关键文件
-- `main.py` — 主实现（必须阅读）：`load()`, `extract_md_content()`, `split_into_chunks()`, `_post_with_retries()`, `chatgpt_interpretation()`, `answer_questions()`。
-- `test_connection.py` — 验证 OpenAI API key 与网络。
-- `pyproject.toml` — Python 版本与依赖（Python >= 3.12, `requests`, `dotenv`）。
-- `mds/` — 输入 Markdown 文件目录（示例：`Relativistic electron beam propagation...md`）。
-- 输出文件：`abstract_conclusion.md`, `interpretation_results.md`（追加模式，支持中断恢复）。
-- 日志文件（运行时产生）：`chatmd.log`（DEBUG 级别详细日志，终端只打印 INFO 摘要）。
+## 依赖与环境
+- Python 3.12+
+- 包管理使用 [uv](https://github.com/astral-sh/uv)；依赖在 `pyproject.toml` 中声明（`requests`, `python-dotenv` 等）。
+- 运行前需在环境变量中设置 `OPENAI_API_KEY`。
 
-快速上手（macOS / zsh）
-- 设置 API key（临时）：
+在使用 uv 的情况下，可按以下步骤准备环境（示例命令基于 zsh）：
 
 ```bash
+# 安装依赖并创建虚拟环境（默认放在 .venv）
+uv sync
+
+# 让当前 shell 使用该虚拟环境
+source .venv/bin/activate
+
+# 配置 API Key（建议写入 ~/.zshrc 以持久化）
 export OPENAI_API_KEY="sk-..."
 ```
 
-- 安装依赖：
+## 配置与运行
+1. **设置输入文档**：在 `main.py` 的 `md_file_path` 指向你要解读的 Markdown 文件（默认示例位于 `mds/` 目录）。
+2. **编辑问题列表**：调整 `questions` 列表即可控制脚本会提出的解读问题；字符串会按顺序处理。
+3. **启动脚本**：
+   ```bash
+   uv run python main.py
+   ```
+   运行结束后可在终端看到 INFO 级别日志，详尽日志请查看 `output/chatmd.log`。
 
-```bash
-pip install requests python-dotenv
-```
+## 输出内容
+- `output/interpretation_results.md`：若不存在会创建，并在文件尾部追加新的回答。每个问题以 `## 问题` 的形式记录，便于日后查找。
+- `output/chatmd.log`：记录所有 API 请求、重试、用量统计及错误信息。
 
-- 运行：
+脚本在写入新答案前会扫描 `interpretation_results.md` 中的 `##` 标题；如果发现同样的问题文本将跳过，以保持幂等。
 
-```bash
-# 测试连接
-python test_connection.py
+## 实现要点
+- `_post_with_retries` 对 `429`/`5xx` 做指数退避，最多尝试 4 次；分片请求之间默认等待 1 秒，可视速率限制调整。
+- 若文档长度只产生一个片段，则直接使用该片段的回答，避免额外的“合并”模型调用；多片段情况下会再次请求模型整合文本。
+- 费用估算基于 GPT-4 Turbo（2025 年 10 月版）的输入/输出单价，仅供调试参考。
+- 当前脚本不会自动调用 `load_dotenv()`；如需从 `.env` 文件加载 key，可在 `main()` 中手动加入。
 
-# 执行主流程（会打印简要进度，详细信息见 chatmd.log）
-python main.py
-```
+## 常见问题排查
+- **`OPENAI_API_KEY` 缺失**：`load()` 会抛出异常；请确认在当前 shell 中设置了环境变量。
+- **频繁出现 429**：适当增大 `split_into_chunks` 的大小、减少问题数量，或延长分片间的 `time.sleep`。
+- **输出重复**：手动删除或重命名 `output/interpretation_results.md` 中的旧条目，脚本即可重新生成对应问题的回答。
 
-行为约定（重要实现细节）
-- 分片策略：`split_into_chunks(content, chunk_size=3000)` — 默认 3000 字符/片。增减会直接影响 API 调用次数和速率。
-- 合并策略：当前实现为“分片 -> 每片调用 -> 再次调用模型合并片段回答”。合并会产生额外请求；如需节省调用，可改为本地拼接/摘要然后只在必要时调用模型精炼。
-- 重试与限流：`_post_with_retries` 对 429/5xx 做指数退避（`base_delay=1`, `max_retries=4`）。每片请求后会 `time.sleep(1)` 以降低速率。
-- 断点续跑：程序会读取 `interpretation_results.md` 中以 `## ` 开头的条目来判断哪些问题已被回答，跳过已存在的问题，从而避免重复调用与重复写入。
-- 日志：终端显示 INFO 摘要；所有 DEBUG/详细信息写入 `chatmd.log`（包括每个 chunk 的短预览）。
-
-安全与提交流程
-- 请不要把 API key 或 `.env` 提交到仓库（`.gitignore` 已包含 `.env`）。
-- 在推送触发实际 API 请求的改动前，请在本地运行 `python test_connection.py` 确认 key 与网络可用。
-
-可直接改进点（可 PR）
-- 将模型名抽成顶部常量（例如 `MODEL = "gpt-4-turbo-preview"`），避免在多个位置硬编码。
-- 把合并改为客户端拼接（在 `chatgpt_interpretation`/`answer_questions` 中用本地合并/摘要替代第二轮模型调用），可显著减少请求次数与费用。
-- 若需更细粒度的断点续跑（例如保存每个片段的部分回答以在中断后从中间恢复），可以为每个问题写入单独的 JSON checkpoint 文件。
-
-故障排查要点
-- 如果遇到 429：先把 `time.sleep(1)` 增加到 `2-5` 秒做试验，或改为更少的合并调用；检查 OpenAI 账户配额。
-- 出现 5xx 或不可预期错误：查看 `chatmd.log` 获取请求与响应的详细信息（`chatmd.log` 在项目根目录）。
-
-代理 / Copilot 使用提示（对自动化编码代理）
-- 本 README 已包含 Copilot 指南要点：入口函数、关键约定、速率与安全注意事项。若要对代码做出修改，请优先在本地运行 `test_connection.py`。
-- 避免在 PR 中引入频繁的 API 调用或在主分支直接触发大量请求。对可能产生额外请求的改动（例如修改问题列表或增加自动化测试）请先在本地验证。
-
-反馈与迭代
-- 如果你希望我把某项建议（例如把模型名抽成常量、实现更强的中断恢复、或把合并改成本地摘要）直接实现为补丁/PR，请说明优先级，我将附带简单测试与变更说明。
-
+如需扩展（例如批量处理多文件、引入独立问答接口或调整模型），可在 `main.py` 上直接修改流程；当前实现的体量便于快速试验与迭代。

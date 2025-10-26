@@ -102,3 +102,48 @@
 2025-10-26 12:18:24,608 - INFO - Synthesized final answer for question: 请总结该文档的主要内容。
 2025-10-26 12:18:24,609 - INFO - Interpretation answers appended to ./output/interpretation_results.md
 2025-10-26 12:18:24,611 - INFO - Chatmd main process finished
+2025-10-26 20:02:09,725 - INFO - Starting Chatmd main process
+2025-10-26 20:04:35,512 - INFO - Starting Chatmd main process
+2025-10-26 20:05:19,145 - INFO - Starting Chatmd main process
+2025-10-26 20:08:05,908 - INFO - Starting Chatmd main process
+2025-10-26 20:08:26,812 - DEBUG - POST https://api.openai.com/v1/chat/completions success (200)
+2025-10-26 20:08:26,813 - INFO - API用量: prompt_tokens=716, completion_tokens=718, total_tokens=1434, 估算价格=$0.0287
+2025-10-26 20:08:26,813 - INFO - Chunk 1/24 answered for question: 请总结该文档的主要内容。该文档的关键结论是什么？
+2025-10-26 20:08:26,814 - DEBUG - Chunk 1 preview: 该文档主要探讨了人为注入的相对论电子束在地球磁层中的传播和演化。通过解决电子分布函数的平均反弹相对论动力学方程，研究聚焦于从上层电离层起始的注入，这些注入在低层大气以上的磁镜反射处发生了显著的能量损失，从而在内磁层形成了一个长寿命的粒子源。
+2025-10-26 20:09:12,771 - INFO - Starting Chatmd main process
+2025-10-26 20:09:12,772 - INFO - Skipping interpretation for question (already present): 请总结该文档的主要内容。
+2025-10-26 20:09:32,859 - DEBUG - POST https://api.openai.com/v1/chat/completions success (200)
+2025-10-26 20:09:32,860 - INFO - API用量: prompt_tokens=704, completion_tokens=657, total_tokens=1361, 估算价格=$0.0268
+2025-10-26 20:09:32,860 - INFO - Chunk 1/24 answered for question: 该文档的关键结论是什么？
+2025-10-26 20:09:32,860 - DEBUG - Chunk 1 preview: 该文档的关键结论包括：  1. **电子束的快速扩散**：人为注入的相对论电子束在地球磁层中的传播被模拟和检查，发现电子束能够由于差异漂移率而快速在磁局部时（MLT）中扩散，最终形成围绕地球的相对均匀的壳层。  2. **能量损失和波动相互
+2025-10-26 20:11:05,486 - INFO - Starting Chatmd main process
+2025-10-26 20:11:05,486 - INFO - Skipping interpretation for question (already present): 请总结该文档的主要内容。
+2025-10-26 20:11:30,520 - DEBUG - POST https://api.openai.com/v1/chat/completions success (200)
+2025-10-26 20:11:30,520 - INFO - API用量: prompt_tokens=19685, completion_tokens=669, total_tokens=20354, 估算价格=$0.2169
+2025-10-26 20:11:30,520 - INFO - Chunk 1/1 answered for question: 该文档的关键结论是什么？
+2025-10-26 20:11:30,520 - DEBUG - Chunk 1 preview: 该文档的关键结论集中在人为注入的相对论电子束在地球内磁层的全球演化上。通过对不同$L$壳层上的电子分布函数求解弹跳平均相对论动力学方程，研究发现：  1. 注入的电子束能够迅速在磁局部时间（MLT）中扩散，由于差异漂移率，最终形成围绕地球的
+2025-10-26 20:11:48,131 - DEBUG - POST https://api.openai.com/v1/chat/completions success (200)
+2025-10-26 20:11:48,131 - INFO - API用量: prompt_tokens=771, completion_tokens=568, total_tokens=1339, 估算价格=$0.0247
+2025-10-26 20:11:48,133 - INFO - Synthesized final answer for question: 该文档的关键结论是什么？
+2025-10-26 20:11:48,134 - INFO - Interpretation answers appended to ./output/interpretation_results.md
+2025-10-26 20:11:48,136 - INFO - Chatmd main process finished
+2025-10-26 20:46:28,061 - INFO - Starting Chatmd main process
+2025-10-26 20:46:45,231 - DEBUG - POST https://api.openai.com/v1/chat/completions success (200)
+2025-10-26 20:46:45,232 - INFO - API用量: prompt_tokens=19813, completion_tokens=359, total_tokens=20172, 估算价格=$0.2089
+2025-10-26 20:46:45,232 - INFO - Chunk 1/1 answered for question: 请用以下模板概括该文档，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’：[xxxx年]，[xx大学/研究机构]的[xx作者等]针对[研究问题]，采用[研究手段/方法]，对[研究对象或范围]进行了研究，并发现/得出[主要结论]。
+2025-10-26 20:46:45,232 - DEBUG - Chunk 1 preview: [1999年]，[未说明]的[G. V. Khazanov, M. W. Liemohn, E. N. Krivorutsky, J. U. Kozyra, 和 B. E. Gilchrist等]针对[人造注入的相对论电子束在地球磁层中的传
+2025-10-26 20:46:46,237 - DEBUG - Single chunk for question '请用以下模板概括该文档，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’：[xxxx年]，[xx大学/研究机构]的[xx作者等]针对[研究问题]，采用[研究手段/方法]，对[研究对象或范围]进行了研究，并发现/得出[主要结论]。', skipping synthesis call.
+2025-10-26 20:46:46,238 - INFO - Skipping interpretation for question (already present): 请总结该文档的主要内容。
+2025-10-26 20:46:46,238 - INFO - Skipping interpretation for question (already present): 该文档的关键结论是什么？
+2025-10-26 20:46:46,238 - INFO - Interpretation answers appended to ./output/interpretation_results.md
+2025-10-26 20:46:46,241 - INFO - Chatmd main process finished
+2025-10-26 20:48:10,601 - INFO - Starting Chatmd main process
+2025-10-26 20:48:31,426 - DEBUG - POST https://api.openai.com/v1/chat/completions success (200)
+2025-10-26 20:48:31,427 - INFO - API用量: prompt_tokens=19837, completion_tokens=553, total_tokens=20390, 估算价格=$0.2150
+2025-10-26 20:48:31,427 - INFO - Chunk 1/1 answered for question: 请用以下模板概括该文档，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’；若涉及到专业词汇，请在结尾处统一进行解释：[xxxx年]，[xx大学/研究机构]的[xx作者等]针对[研究问题]，采用[研究手段/方法]，对[研究对象或范围]进行了研究，并发现/得出[主要结论]。
+2025-10-26 20:48:31,427 - DEBUG - Chunk 1 preview: 1999年，Khazanov等人针对人造注入的相对论电子束在地球磁层中的全球演化问题，采用解决弹跳平均相对论动力学方程的方法，对上层电离层起源的注入在内磁层中的长期行为进行了研究，并发现电子束在通过不同的磁壳（L值）迅速在磁局部时间（MLT
+2025-10-26 20:48:32,432 - DEBUG - Single chunk for question '请用以下模板概括该文档，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’；若涉及到专业词汇，请在结尾处统一进行解释：[xxxx年]，[xx大学/研究机构]的[xx作者等]针对[研究问题]，采用[研究手段/方法]，对[研究对象或范围]进行了研究，并发现/得出[主要结论]。', skipping synthesis call.
+2025-10-26 20:48:32,433 - INFO - Skipping interpretation for question (already present): 请总结该文档的主要内容。
+2025-10-26 20:48:32,433 - INFO - Skipping interpretation for question (already present): 该文档的关键结论是什么？
+2025-10-26 20:48:32,434 - INFO - Interpretation answers appended to ./output/interpretation_results.md
+2025-10-26 20:48:32,436 - INFO - Chatmd main process finished
