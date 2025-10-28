@@ -219,15 +219,13 @@ def chatgpt_interpretation(md_content, questions, openai_api_key):
 def main():
     logger.info("Starting Chatmd main process")
     OPENAI_API_KEY = load()
-    md_file_path = "./mds/Relativistic electron beam propagation in the Earth's magnetosphere_MinerU__20251025025446.md"
+    md_file_path = "./mds/PROPAGATION OF ELECTRON BEAMS IN SPACE_MinerU__20251028030749.md"
     md_content = read_md_content(md_file_path)
 
     questions = [
         "请用以下模板概括该文档，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’；若涉及到专业词汇，请在结尾处统一进行解释：[xxxx年]，[xx大学/研究机构]的[xx作者等]针对[研究问题]，采用[研究手段/方法]，对[研究对象或范围]进行了研究，并发现/得出[主要结论]。"
-        # ,
-        # "请总结该文档的主要内容。"
-        # ,
-        # "该文档的关键结论是什么？"
+        ,
+        "请用以下模板概括该文档中研究的电子束的参数，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’：本文研究的电子束能量是[xx-xx MeV], 流强是[xx-xx A], 发射度是[xx]，发射角为[xx]，初始半径为[xx]。"
     ]
     chatgpt_interpretation(md_content, questions, OPENAI_API_KEY)
     logger.info("Chatmd main process finished")
