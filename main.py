@@ -219,7 +219,7 @@ def chatgpt_interpretation(md_content, questions, openai_api_key):
 def main():
     logger.info("Starting Chatmd main process")
     OPENAI_API_KEY = load()
-    md_file_path = "./mds/空间环境下强流相对论电子束长程传输研究_薛碧曦_MinerU__20251028091250.md"
+    md_file_path = "./mds/Influence_of_Geomagnetic_Field_on_the_Long-Range_Propagation.md"
     md_content = read_md_content(md_file_path)
 
     questions = [
