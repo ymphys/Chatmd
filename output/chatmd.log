@@ -1,0 +1,8 @@
+2025-11-01 11:13:57,435 - INFO - Starting Chatmd main process
+2025-11-01 11:14:17,703 - DEBUG - POST https://api.openai.com/v1/chat/completions success (200)
+2025-11-01 11:14:17,704 - INFO - API用量: prompt_tokens=17052, completion_tokens=580, total_tokens=17632, 估算价格=$0.1879
+2025-11-01 11:14:17,704 - INFO - Chunk 1/1 answered for question: 请用以下模板概括该文档，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’；若涉及到专业词汇，请在结尾处统一进行解释：[xxxx年]，[xx大学/研究机构]的[xx作者等]针对[研究问题]，采用[研究手段/方法]，对[研究对象或范围]进行了研究，并发现/得出[主要结论]。
+2025-11-01 11:14:17,704 - DEBUG - Chunk 1 preview: 在1997年，哈佛大学的Juan Maldacena针对超对称场论与超引力理论之间的关系，采用理论分析方法，对在大N极限下某些共形场论与反de Sitter空间上的超引力理论之间的关联进行了研究，并发现这些场论在其Hilbert空间中包含描
+2025-11-01 11:14:18,709 - DEBUG - Single chunk for question '请用以下模板概括该文档，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’；若涉及到专业词汇，请在结尾处统一进行解释：[xxxx年]，[xx大学/研究机构]的[xx作者等]针对[研究问题]，采用[研究手段/方法]，对[研究对象或范围]进行了研究，并发现/得出[主要结论]。', skipping synthesis call.
+2025-11-01 11:14:18,710 - INFO - Interpretation answers appended to ./output/interpretation_results.md
+2025-11-01 11:14:18,712 - INFO - Chatmd main process finished

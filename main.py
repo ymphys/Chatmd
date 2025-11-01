@@ -219,14 +219,12 @@ def chatgpt_interpretation(md_content, questions, openai_api_key):
 def main():
     logger.info("Starting Chatmd main process")
     OPENAI_API_KEY = load()
-    md_file_path = "./mds/Design and Simulation Analysis of Charged Particle Beam Coverage.md"
+    md_file_path = "./mds/9711200v3_MinerU__20251101031155.md"
     md_content = read_md_content(md_file_path)
 
     questions = [
-        "请总结本文中有关地磁场的模型假设，包括其数学表达式和参数设定，注意对专业术语进行解释。",
-        # "请用以下模板概括该文档，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’；若涉及到专业词汇，请在结尾处统一进行解释：[xxxx年]，[xx大学/研究机构]的[xx作者等]针对[研究问题]，采用[研究手段/方法]，对[研究对象或范围]进行了研究，并发现/得出[主要结论]。"
-        # ,
-        # "请用以下模板概括该文档中研究的电子束的参数，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’；对每个参数的引用，请在结尾处统一给出原文位置：本文研究的电子束能量是[xx-xx MeV], 能散是[xx], 流强是[xx-xx A], 发射度是[xx]，发射角为[xx]，初始半径为[xx]。"
+        "请用以下模板概括该文档，并将其中的占位符填入具体信息；若文中未提及某项，请写‘未说明’；若涉及到专业词汇，请在结尾处统一进行解释：[xxxx年]，[xx大学/研究机构]的[xx作者等]针对[研究问题]，采用[研究手段/方法]，对[研究对象或范围]进行了研究，并发现/得出[主要结论]。"
+        # ,"添加其他问题..."
     ]
     chatgpt_interpretation(md_content, questions, OPENAI_API_KEY)
     logger.info("Chatmd main process finished")

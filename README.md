@@ -29,7 +29,10 @@ export OPENAI_API_KEY="sk-..."
 
 ## 配置与运行
 1. **设置输入文档**：在 `main.py` 的 `md_file_path` 指向你要解读的 Markdown 文件（默认示例位于 `mds/` 目录）。
-2. **编辑问题列表**：调整 `questions` 列表即可控制脚本会提出的解读问题；字符串会按顺序处理。
+(如果你手头只有PDF文件，可以先使用[MinerU](https://mineru.net/OpenSourceTools/Extractor/)将它转换为md格式。)
+
+2. **编辑问题列表**：调整 `questions` 列表即可控制脚本会提出的解读问题；字符串会按顺序处理。已经解读过的问题及其返回的答案会被自动跳过(load_existing_answers函数的功能)，请不要注释或更改，否则会被视为新问题。
+
 3. **启动脚本**：
    ```bash
    uv run python main.py
